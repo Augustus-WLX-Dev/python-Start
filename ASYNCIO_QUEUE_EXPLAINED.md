@@ -49,7 +49,8 @@ See `src/asy_queue_simple.py` for the implementation.
 ### 5. The Microscopic Future (Line 62) / 微观 Future 机制 (第 62 行)
 > `await asyncio.gather(*producers)`
 
-**English**: This line creates an aggregated `Future`, which acts like an **Electronic Tracking Number**.
+**English**: This line creates an aggregated `Future`. Thus, `await asyncio.gather(*producers)` is conceptually equivalent to `await Future`.
+Accumulated, it acts like an **Electronic Tracking Number**.
 A `Future` is an object with 3 functions:
 1.  **State Machine**: Currently `Pending` (can be `Finished` or `Cancelled`).
 2.  **Mailbox**: Holds the `_result` (initially incomplete). Default completion result is `None`.
@@ -62,7 +63,8 @@ A `Future` is an object with 3 functions:
 4.  **Completion**: When producers finish, the Future's State Machine turns to `Finished`, the Mailbox gets `_result(None)`, and the **Callback automatically triggers**.
 5.  **Wake Up**: The Callback calls `main()` and throws it back into the Ready Loop. The emotionless Event Loop sees `main()` again and runs it.
 
-**中文**: 这一行代码创造了一个聚合版的 `Future`，它就像是一张 **电子快递单**。
+**中文**: 这一行代码创造了一个聚合版的 `Future`。因此，`await asyncio.gather(*producers)` 本质上就是在 `await Future`。
+它就像是一张 **电子快递单**。
 一个 `Future` 是拥有 3 种功能的对象：
 1.  **状态机**: 目前是 `Pending` (还有 `Finished` 和 `Cancelled`)。
 2.  **信箱**: 告知完成度 `_result`，目前是未完成。默认完成是传入 `None`。
