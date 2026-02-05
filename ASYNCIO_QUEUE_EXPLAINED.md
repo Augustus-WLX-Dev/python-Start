@@ -109,3 +109,19 @@ Future 类似于一式两份的电子合同，也类似 **双机热线 (Dual Pho
 **English**: When consumers are cancelled, a `CancelledError` bursts through their infinite loop. This line tells the Event Loop that this specific error is **expected behavior**, so it stays silent (no stack trace prints) and the program exits gracefully.
 
 **中文**: 让消费者 cancel 时会有 error 冲破消费者的死循环，这行代码就是 Event Loop 说这个错误是 **预期内的 (Expected)**，不用惊慌 (不用打印报错信息)。
+
+---
+
+## The Ultimate Laws of Asyncio / Asyncio 世界的终极定律
+
+1.  **Drilling Down**: In the Asyncio world, every `await`, when drilled down to the bottom, eventually hits a `Future` object.
+    **深钻定律**: 所有的 `await`，在 asyncio 世界往下深钻，都会碰到 `Future` 对象。
+
+2.  **Wormhole Traversal**: All `await`s originate within the running **Event Loop**. They use the `Future` object as a "Wormhole" to seamlessly transition functions in and out of the Event Loop's Ready Queue.
+    **虫洞跨越**: 所有的 `await` 其实都是在 Event Loop 的运行过程中，通过 `Future` 对象实现虫洞跨越，无缝衔接不同的函数在 Event Loop 的 Ready queue 中进出运行。
+
+3.  **The Generator**: `Future` is the **Wormhole Generator**. It decides who should temporarily vanish (leave the Ready Queue) and who should reappear (return to the Ready Queue).
+    **生成器**: `Future` 是虫洞生成器：它决定了谁该暂时消失（离开 Ready Queue），谁该重新出现（回到 Ready Queue）。
+
+4.  **The Track**: The **Event Loop** is simply the **Race Track**. It only runs what appears in the Ready Queue. It has no idea who came back through a "Wormhole" and who was just "born".
+    **跑道**: Event Loop 是单纯的跑道：它只管跑那些出现在 Ready Queue 里的东西。它根本不知道谁是通过“虫洞”回来的，谁是刚“出生”的。
