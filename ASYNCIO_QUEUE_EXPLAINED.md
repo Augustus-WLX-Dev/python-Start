@@ -46,12 +46,34 @@ See `src/asy_queue_simple.py` for the implementation.
 
 ---
 
-### 5. Super Aggregation (Line 62) / 超级聚合 (第 62 行)
+### 5. The Microscopic Future (Line 62) / 微观 Future 机制 (第 62 行)
 > `await asyncio.gather(*producers)`
 
-**English**: The `*` operator unpacks the producers one by one (equivalent to `asyncio.gather(p1, p2)`). `asyncio.gather` creates a **Super Aggregated Future** object. This object only triggers its callback when *all* producer tasks are completed.
+**English**: This line creates an aggregated `Future`, which acts like an **Electronic Tracking Number**.
+A `Future` is an object with 3 functions:
+1.  **State Machine**: Currently `Pending` (can be `Finished` or `Cancelled`).
+2.  **Mailbox**: Holds the `_result` (initially incomplete). Default completion result is `None`.
+3.  **Pager/Caller**: Contains a list of `callbacks`. Triggers automatically when state becomes `Finished` or `Cancelled`.
 
-**中文**: `*` 就是把所有的生产者一个个拿出来的意思 (解包)，相当于把代码变成 `asyncio.gather(生产者1, 生产者2)`。`asyncio.gather` 是超级聚合，Event Loop 给参数里面的所有任务搞了一个 **聚合 Future 对象**，这个对象只有当所有生产者的任务都做完了，才会呼叫主程序继续往下走。
+**The Awakening Process**:
+1.  **Binding**: When `main()` calls `await`, it binds itself to the Future's callback list.
+2.  **Handover**: `main()` hands control to the **Event Loop** (which is an emotionless machine).
+3.  **Ignition**: The Event Loop immediately fires up all tasks in the Ready Queue (including consumers).
+4.  **Completion**: When producers finish, the Future's State Machine turns to `Finished`, the Mailbox gets `_result(None)`, and the **Callback automatically triggers**.
+5.  **Wake Up**: The Callback calls `main()` and throws it back into the Ready Loop. The emotionless Event Loop sees `main()` again and runs it.
+
+**中文**: 这一行代码创造了一个聚合版的 `Future`，它就像是一张 **电子快递单**。
+一个 `Future` 是拥有 3 种功能的对象：
+1.  **状态机**: 目前是 `Pending` (还有 `Finished` 和 `Cancelled`)。
+2.  **信箱**: 告知完成度 `_result`，目前是未完成。默认完成是传入 `None`。
+3.  **呼叫机**: 内部有很多 `callbacks`。一旦状态机变成 `Finished` 或 `Cancelled`，信箱汇报结果 (或异常)，呼叫机就会自动触发 (自己打电话喊人起床或通知取消)。
+
+**唤醒流程**:
+1.  **绑定**: `main()` 通过 `await` (虫洞) 将自己绑定到了 Future 的 callback 列表里，然后交出主权。
+2.  **接管**: **Event Loop** (一个没有感情的死循环机器) 接管控制权。
+3.  **点火**: Event Loop 立刻启动 Ready Queue 里所有的 tasks (包括消费者机器人)。
+4.  **完成**: 当所有生产者跑完，Future 自己就会亮起来 (状态机变绿)，触发 Callback。
+5.  **唤醒**: Callback 自动打电话给 `main()`，把它扔回 Ready Queue。脸盲的 Event Loop 看到又有一个 task (`main`)，就把它扔进内存让它继续跑。
 
 ---
 
