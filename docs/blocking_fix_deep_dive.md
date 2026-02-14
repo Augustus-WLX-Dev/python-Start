@@ -13,6 +13,11 @@
 ---
 
 ### @blocking_fix.py#L41-42
+```python
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
 **English**:
 1. The Python interpreter uses the `asyncio` blueprint to initialize the library and generate the **Event Loop (Main Lens)**.
 2. `asyncio.run(main())` internally creates a `Runner` object. The `Runner` calls `Loop.create_task(main())`, and the **Main Task (Director & Star)** appears.
